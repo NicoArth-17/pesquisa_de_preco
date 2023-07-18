@@ -6,9 +6,18 @@ from selenium.webdriver.common.by import By # Selecionar elementos
 from selenium.webdriver.common.keys import Keys # Utilizar comandos do teclado
 import time
 import win32com.client as win32
+# Importanto tkinter para fazer escolha do arquivo inicial
+from tkinter import *
+import tkinter.filedialog
+from tkinter import messagebox
+
+# Cirando janela para que o usuário que vai executar o python.exe possa selecionar arquivo inicial
+janela = Tk()
+arquivo = tkinter.filedialog.askopenfilename(title='Selecione arquivo com os produtos')
+janela.destroy()
 
 # Criando df com arquivo inicial
-produtos_df = pd.read_excel(r'C:\Users\mobishopgamer\Documents\RepositorioGitHub\pesquisa_de_preco\PesquisarPreço\arquivos\buscas.xlsx')
+produtos_df = pd.read_excel(arquivo)
 
 # Instalar arquivo temporário ChromeDrive a partir da versão atual do Chrome
 servico = Service(ChromeDriverManager().install())
@@ -180,10 +189,6 @@ for linha in produtos_df.index:
 iphone_df = iphone_df.sort_values(['PREÇO'])
 rtx_df = rtx_df.sort_values(['PREÇO'])
 
-# Exportando df dos resultados
-iphone_df.to_excel(r'C:\Users\mobishopgamer\Documents\RepositorioGitHub\pesquisa_de_preco\PesquisarPreço\arquivos\resultados\iphone.xlsx')
-rtx_df.to_excel(r'C:\Users\mobishopgamer\Documents\RepositorioGitHub\pesquisa_de_preco\PesquisarPreço\arquivos\resultados\rtx.xlsx')
-
 # Envio de email
 
 # verificando se existe informaçao dentro da tabela de resultados
@@ -211,3 +216,18 @@ if len(iphone_df.index) > 0 and len(rtx_df.index) > 0:
     mail.Send()
 
 nav.quit()  
+
+# Exportando df dos resultados
+
+# abrindo janela para escolher diretório
+janela2 = Tk()
+save = tkinter.filedialog.askdirectory(title= 'Selecione onde deseja salvar a planilha de resultados')
+
+# salvando os arquivos no diretório
+iphone_df.to_excel(rf'{save}/iphone.xlsx')
+rtx_df.to_excel(rf'{save}/rtx.xlsx')
+
+# menssagem de conclusão
+messagebox.showinfo('Status', 'Execução concluída')
+
+janela2.destroy()
